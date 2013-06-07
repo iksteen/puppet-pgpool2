@@ -40,6 +40,8 @@ class pgpool2(
   $package_ensure                       = 'present',
   $confdir                              = undef,
   $service_name                         = undef,
+  $conf_owner                           = 'root',
+  $conf_group                           = 'postgres',
   # == pgpool2.conf ==
   # CONNECTIONS
   # pgpool connection settings
@@ -161,10 +163,20 @@ class pgpool2(
   file { 'pgpool.conf':
     ensure  => 'present',
     path    => "${pgpool2::params::confdir}/pgpool.conf",
-    owner   => root,
-    group   => postgres,
+    owner   => $conf_owner,
+    group   => $conf_group,
     mode    => '0640',
     content => template('pgpool2/pgpool.erb'),
+    require => Package['pgpool2'],
+    notify  => Service['pgpool2'],
+  }
+
+  file { 'pcp.conf':
+    ensure  => 'present',
+    path    => "${pgpool2::params::confdir}/pcp.conf",
+    owner   => $conf_owner,
+    group   => $conf_group,
+    mode    => '0640',
     require => Package['pgpool2'],
     notify  => Service['pgpool2'],
   }
@@ -173,6 +185,9 @@ class pgpool2(
     ensure  => running,
     name    => $pgpool2::params::service_name,
     enable  => true,
-    require => File['pgpool.conf'],
+    require => [
+      File['pgpool.conf'],
+      File['pcp.conf'],
+    ],
   }
 }
