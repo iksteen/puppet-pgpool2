@@ -101,7 +101,7 @@ class pgpool2(
   $replication_stop_on_mismatch         = false,
   $failover_if_affected_tuples_mismatch = false,
   # LOAD BALANCING MODE
-  $load_balancing_mode                  = false,
+  $load_balance_mode                    = false,
   $ignore_leading_white_space           = true,
   $white_function_list                  = [],
   $black_function_list                  = ['nextval', 'setval'],
